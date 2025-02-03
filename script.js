@@ -4,6 +4,35 @@ let imgButton = document.querySelector("#image");
 let imgInput = imgButton.querySelector("input");
 let image=document.querySelector("#image img")
 let submit=document.querySelector("#submit")
+let theme=document.querySelector("#theme")
+let pArea=document.querySelector(".prompt-area")
+let themeValue="dark"
+theme.addEventListener("click",()=>{
+  if(themeValue=="dark"){
+    document.body.style.backgroundColor="#fff"
+    document.body.style.color="#000"
+    chatContainer.style.backgroundColor="#fff"
+    chatContainer.style.color="#fff"
+    promptInput.style.color = "#000"; 
+    promptInput.style.backgroundColor = "#fff"; 
+    promptInput.style.boxShadow = "5px 5px 10px black";
+    pArea.style.backgroundColor = "white";
+    themeValue="light"
+
+}
+else{
+  document.body.style.backgroundColor="#17181ade"
+  document.body.style.color="#fff"
+  chatContainer.style.backgroundColor="#353638"
+  chatContainer.style.color="#fff"
+  promptInput.style.backgroundColor="#232326"
+  promptInput.style.color="#000"
+  submit.style.backgroundColor="#000"
+  pArea.style.backgroundColor = "#353638";
+  promptInput.style.boxShadow = "1px 1px 5px black";
+  themeValue="dark"
+
+}})
 
 const API_URL =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyCSpOLtPIxD5T-OP7T0vzjAjaHEMl0uXHw";
@@ -50,7 +79,7 @@ async function generateResponse(aiChatBox) {
       top: chatContainer.scrollHeight,
       behavior: "smooth",
     });
-    image.src=`img.svg`
+    image.src=`image2.svg`
       image.classList.remove("choose")
       user.file={}
   }
@@ -69,7 +98,7 @@ function handleChatResponse(message) {
           src="user-image1.jpeg"
           alt="bot image"
           id="user-image"
-          width="10%"
+          width="5%"
           
         />
         <div class="user-chat-area">
@@ -84,27 +113,27 @@ function handleChatResponse(message) {
     behavior: "smooth",
   });
   setTimeout(() => {
-    let html = ` <img src="ai-image1.jpeg" alt="" id="ai-image" width="7%" />
-        <div class="ai-chat-area">
+    let html = `<img src="logo1.jpg" alt="ai image" id="ai-image" width="5%" />
+    <div class="ai-chat-area">
          <img src="load9.gif" alt="" width="30%" class="load" height="30px">
-             </div>`;
+  </div>`;
     let aiChatbox = createChatBox(html, "ai-chat-box");
     chatContainer.appendChild(aiChatbox);
     generateResponse(aiChatbox);
-    
   }, 300);
+  
 }
 
 promptInput.addEventListener("keydown", (e) => {
   if (e.key == "Enter") {
-    image.src=`img.svg`
+    image.src=`image2.svg`
       image.classList.remove("choose")
     handleChatResponse(promptInput.value);
   }
 
 } );
 submit.addEventListener("click",()=>{
-      image.src=`img.svg`
+      image.src=`image2.svg`
       image.classList.remove("choose")
     
     handleChatResponse(promptInput.value);
