@@ -35,7 +35,7 @@ h1 {
 }
 nav #theme {
   position: absolute;
-  right: 5%;
+  right: 4%;
 }
 .chat-container {
   width: 100%;
@@ -183,9 +183,15 @@ button .icon {
   nav h1 {
     font-size: 1.5rem;
   }
- 
+  .user-chat-area{
+    margin-left: 3vw;
+  }
   nav img {
     width: 10%;
+  }
+  nav #theme{
+    width: 9vw;
+    height: 6vh;
   }
   nav #logo {
     width: 13%;
@@ -197,7 +203,7 @@ button .icon {
     left: 0;
   }
   .ai-chat-area {
-    margin-left: 1vh;
+    margin-left: 4vw;
   }
 }
 @media (max-width: 400px) {
@@ -215,15 +221,16 @@ button .icon {
   }
 
   #ai-image {
-    width: 10%;
+    width: 10vw;
+   
     
   }
   #user-image {
-    width: 11%;
+    width: 9vw;
     margin-left: -4vw;
   }
 }
-@media (max-width: 400px){
+@media (max-width: 350px){
     nav #logo {
         width: 16%;
         aspect-ratio: 1 /0.5;
