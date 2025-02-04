@@ -26,7 +26,7 @@ else{
   chatContainer.style.backgroundColor="#353638"
   chatContainer.style.color="#fff"
   promptInput.style.backgroundColor="#232326"
-  promptInput.style.color="#000"
+  promptInput.style.color="#fff"
   submit.style.backgroundColor="#000"
   pArea.style.backgroundColor = "#353638";
   promptInput.style.boxShadow = "1px 1px 5px black";
