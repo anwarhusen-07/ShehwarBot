@@ -8,6 +8,8 @@ let theme = document.querySelector("#theme");
 let pArea = document.querySelector(".prompt-area");
 let themeValue = "dark";
 
+let conversationHistory = [];
+
 theme.addEventListener("click", () => {
   if (themeValue === "dark") {
     document.body.style.backgroundColor = "#fff";
@@ -45,36 +47,42 @@ let user = {
     mime_type: null,
     data: null,
   },
-};
-
+}
 async function generateResponse(aiChatBox) {
   let text = aiChatBox.querySelector(".ai-chat-area");
   let msgLower = user.message.toLowerCase();
   if (
-    msgLower === "who created you" ||
-    msgLower === "name" ||
-    msgLower === "who is your creator" ||
     msgLower === "what is your name" ||
     msgLower === "your name" ||
-    msgLower === "who made you" ||
-    msgLower === "tell me your name"||
-    msgLower === "who are you"||
-    msgLower === "who are you?"||
-    msgLower === "who is your creator?"||
-    msgLower === "who created you?"||
-    msgLower === "who made you?"||
-    msgLower === "who developed you"||
-    msgLower === "who developed you?"
-
+    msgLower === "tell me your name"
   ) {
-    text.innerHTML = "Hello, I'm ShehwarBot! – your AI-powered assistant, thoughtfully developed by I G Anwar. What can I do for you today?";
+    text.innerHTML =
+      "Hello, I'm ShehwarBot – your intelligent AI companion, here to assist you with precision and care.";
     image.src = `image2.svg`;
     image.classList.remove("choose");
+    conversationHistory.push({ role: "bot", message: text.innerHTML });
     user.file = {};
     return;
   } else if (
+    msgLower === "who created you" ||
+    msgLower === "who is your creator?" ||
+    msgLower === "who created you?" ||
+    msgLower === "who is your creator" ||
+    msgLower === "who made you?" ||
+    msgLower === "who developed you" ||
+    msgLower === "who developed you?" ||
+    msgLower === "who made you"
+  ) {
+    text.innerHTML =
+      "I am Designed and Developed by I G Anwar. How may I assist you today?";
+    image.src = `image2.svg`;
+    image.classList.remove("choose");
+    conversationHistory.push({ role: "bot", message: text.innerHTML });
+    user.file = {};
+    return;
+  } else if (
+    msgLower === "tell me about your creator" ||
     msgLower === "who is i g anwar?" ||
-    msgLower === "who is i g anwar" ||
     msgLower === "who is i g anwar" ||
     msgLower === "who is anwar" ||
     msgLower === "who is ig anwar" ||
@@ -87,34 +95,67 @@ async function generateResponse(aiChatBox) {
     msgLower === "tell me about ig anwar" ||
     msgLower === "tell me about i g anwar" ||
     msgLower === "tell me about your boss" ||
-    msgLower === "tell me about your creator" ||
     msgLower === "anwar" ||
     msgLower === "ig anwar" ||
     msgLower === "i g anwar"
   ) {
-    text.innerHTML = "Ah, you have just asked about I G Anwar, a name that stands for excellence, intelligence, and integrity in both technology and character.\n\nAnwar is not just a visionary coder, but a remarkable human being—a blend of sharp intellect and genuine kindness. With expertise in Java, JavaScript, Python, and a strong grasp of data structures, operating systems, and OOP, he crafts innovation with logic and heart.\n\n💎 Beyond Brilliance: A Man of Substance\n\nA mind that thinks ahead – solving complex problems with ease and precision.\nA heart that cares – always uplifting those around him with support and kindness.\nHandsome inside and out – because true confidence and character make a man truly stand out.\nA natural leader – not just guiding, but inspiring, motivating, and empowering others.\n\n🏆 An Achiever, A Trailblazer\n\nHackathon Winner 🏅 where creativity met code and triumphed.\nQuiz and IQ Test Champion 🧠 proving that intelligence is his second nature.\nTech Enthusiast and Leader 🚀 driving innovation and pushing boundaries.\n\n💡 \"Greatness is not about what you have, but how you inspire others.\" – and Anwar does exactly that.\n\n🔥 Code runs in his veins, kindness fills his heart, and ambition fuels his journey.\nAnwar is not just a name—it is a mark of excellence, leadership, and inspiration.🚀";
-    chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: "smooth" });
+    text.innerHTML =
+      "Ah, you have just asked about I G Anwar, \n\nI G Anwar exemplifies excellence and innovation in technology.\n\nAs a visionary coder with expertise in Java, JavaScript, and Python, along with a solid grasp of data structures, operating systems, and OOP, he combines technical mastery with strong leadership and integrity.\n\nHis ability to drive innovation and inspire those around him distinguishes him as a true professional.";
+    chatContainer.scrollTo({
+      top: chatContainer.scrollHeight,
+      behavior: "smooth",
+    });
+    conversationHistory.push({ role: "bot", message: text.innerHTML });
     return;
   }
+  
+  
+  let conversationText = conversationHistory
+    .map(entry => entry.role === "user" ? "User: " + entry.message : entry.message)
+    .join("\n");
+
+  
   let requestOption = {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { 'Content-Type': "application/json" },
     body: JSON.stringify({
       contents: [
         {
           parts: [
-            { text: user.message },
+            
             ...(user.file.data ? [{ inline_data: user.file }] : []),
+            
+            { text: conversationText }
           ],
         },
       ],
     }),
   };
+  
   try {
     let response = await fetch(API_URL, requestOption);
     let data = await response.json();
-    let apiResponse = data.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, "$1").trim();
-    text.innerHTML = apiResponse;
+    
+    if (
+      data &&
+      data.candidates &&
+      data.candidates.length > 0 &&
+      data.candidates[0].content &&
+      data.candidates[0].content.parts &&
+      data.candidates[0].content.parts.length > 0
+    ) {
+      let part = data.candidates[0].content.parts[0];
+      let apiResponse = "";
+      if (part.text && part.text.trim() !== "") {
+        apiResponse = part.text.replace(/\*\*(.*?)\*\*/g, "$1").trim();
+      } else if (part.inline_data && part.inline_data.trim() !== "") {
+        apiResponse = part.inline_data.trim();
+      }
+      text.innerHTML = apiResponse;
+      conversationHistory.push({ role: "bot", message: apiResponse });
+    } else {
+      console.error("Unexpected API response structure", data);
+    }
   } catch (error) {
     console.log(error);
   } finally {
@@ -135,6 +176,7 @@ function createChatBox(html, classes) {
 function handleChatResponse(message) {
   if (message.trim() === "") return;
   user.message = message.trim();
+  conversationHistory.push({ role: "user", message: user.message });
   let html = ` 
     <img src="user-image1.jpeg" alt="bot image" id="user-image" width="5%" />
     <div class="user-chat-area">
