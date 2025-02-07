@@ -39,25 +39,28 @@ theme.addEventListener("click", () => {
   }
 });
 
-const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyCSpOLtPIxD5T-OP7T0vzjAjaHEMl0uXHw";
+const API_URL =
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyCSpOLtPIxD5T-OP7T0vzjAjaHEMl0uXHw";
 
 function fetchData(requestOption, retries = 10) {
-  return fetch(API_URL, requestOption)
-    .then(response => {
-      if (!response.ok) {
-        if (response.status === 503 && retries > 0) {
-          console.warn(`Received 503. Retrying in 1 second... (${retries} retries left)`);
-          return new Promise(resolve => setTimeout(resolve, 1000))
-            .then(() => fetchData(requestOption, retries - 1));
-        }
-        console.error("Response status:", response.status);
-        return response.text().then(text => {
-          console.error("Response text:", text);
-          throw new Error("Unexpected API response structure");
-        });
+  return fetch(API_URL, requestOption).then((response) => {
+    if (!response.ok) {
+      if (response.status === 503 && retries > 0) {
+        console.warn(
+          `Received 503. Retrying in 1 second... (${retries} retries left)`
+        );
+        return new Promise((resolve) => setTimeout(resolve, 1000)).then(() =>
+          fetchData(requestOption, retries - 1)
+        );
       }
-      return response.json();
-    });
+      console.error("Response status:", response.status);
+      return response.text().then((text) => {
+        console.error("Response text:", text);
+        throw new Error("Unexpected API response structure");
+      });
+    }
+    return response.json();
+  });
 }
 
 let user = {
@@ -74,9 +77,14 @@ async function generateResponse(aiChatBox, currentMessage, currentFile) {
   if (
     msgLower === "what is your name" ||
     msgLower === "your name" ||
+    msgLower === "what is your name?" ||
+    msgLower === "your name?" ||
+    msgLower === "what's your name?" ||
+    msgLower === "what's your name" ||
     msgLower === "tell me your name"
   ) {
-    textElem.innerHTML = "Hello, I'm ShehwarBot – your intelligent AI companion, here to assist you with precision and care.";
+    textElem.innerHTML =
+      "Hello, I'm ShehwarBot – your intelligent AI companion, here to assist you with precision and care.";
     image.src = `image2.svg`;
     image.classList.remove("choose");
     conversationHistory.push({ role: "AI", message: textElem.innerHTML });
@@ -89,9 +97,12 @@ async function generateResponse(aiChatBox, currentMessage, currentFile) {
     msgLower === "who made you?" ||
     msgLower === "who developed you" ||
     msgLower === "who developed you?" ||
+    msgLower === "who built you?" ||
+    msgLower === "who built you" ||
     msgLower === "who made you"
   ) {
-    textElem.innerHTML = "I am Designed and Developed by I G Anwar. How may I assist you today?";
+    textElem.innerHTML =
+      "I am Designed and Developed by I G Anwar. How may I assist you today?";
     image.src = `image2.svg`;
     image.classList.remove("choose");
     conversationHistory.push({ role: "AI", message: textElem.innerHTML });
@@ -101,12 +112,14 @@ async function generateResponse(aiChatBox, currentMessage, currentFile) {
     msgLower === "who is i g anwar?" ||
     msgLower === "who is i g anwar" ||
     msgLower === "who is anwar" ||
+    msgLower === "who is anwar?" ||
     msgLower === "who is ig anwar" ||
     msgLower === "who is ig anwar?" ||
     msgLower === "tell me something about your boss" ||
     msgLower === "tell me something about your creator" ||
     msgLower === "tell me something about i g anwar" ||
     msgLower === "tell me something about ig anwar" ||
+    msgLower === "tell me something about anwar" ||
     msgLower === "tell me about anwar" ||
     msgLower === "tell me about ig anwar" ||
     msgLower === "tell me about i g anwar" ||
@@ -115,7 +128,12 @@ async function generateResponse(aiChatBox, currentMessage, currentFile) {
     msgLower === "ig anwar" ||
     msgLower === "i g anwar"
   ) {
-    textElem.innerHTML = "Ah, you have just asked about I G Anwar, \n\nI G Anwar exemplifies excellence and innovation in technology.\n\nAs a visionary coder with expertise in Java, JavaScript, and Python, along with a solid grasp of data structures, operating systems, and OOP, he combines technical mastery with strong leadership and integrity.\n\nHis ability to drive innovation and inspire those around him distinguishes him as a true professional.";
+    textElem.innerHTML =
+      " ✨ I G Anwar – A Name That Inspires Excellence ✨ \n\n" +  
+      "A mind that sees beyond the present, a heart that uplifts others, and a vision set on greatness. " +  
+      "Anwar is not just defined by his intelligence but by the kindness and leadership that make him stand apart. " +  
+      "His journey is one of ambition, resilience, and the unwavering pursuit of making a difference.\n\n" +  
+      "He isn’t just walking towards success—he’s shaping the future, and soon, the world will know his name. 💫 ";  
     chatContainer.scrollTo({
       top: chatContainer.scrollHeight,
       behavior: "smooth",
@@ -123,7 +141,9 @@ async function generateResponse(aiChatBox, currentMessage, currentFile) {
     conversationHistory.push({ role: "AI", message: textElem.innerHTML });
     return;
   }
-  let conversationText = conversationHistory.map(entry => entry.message).join("\n");
+  let conversationText = conversationHistory
+    .map((entry) => entry.message)
+    .join("\n");
   let requestOption = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -132,13 +152,17 @@ async function generateResponse(aiChatBox, currentMessage, currentFile) {
         {
           parts: [
             {
-              "text": (conversationText ? conversationText + "\n" : "") + currentMessage
+              text:
+                (conversationText ? conversationText + "\n" : "") +
+                currentMessage,
             },
-            currentFile && currentFile.data ? [{ "inline_data": currentFile }] : []
-          ]
-        }
-      ]
-    })
+            currentFile && currentFile.data
+              ? [{ inline_data: currentFile }]
+              : [],
+          ],
+        },
+      ],
+    }),
   };
   try {
     let data = await fetchData(requestOption);
@@ -162,12 +186,18 @@ async function generateResponse(aiChatBox, currentMessage, currentFile) {
     } else {
       console.error("Unexpected API response structure", data);
       textElem.innerHTML = "The server is overloaded. Please try again later.";
-      conversationHistory.push({ role: "AI", message: "The server is overloaded. Please try again later." });
+      conversationHistory.push({
+        role: "AI",
+        message: "The server is overloaded. Please try again later.",
+      });
     }
   } catch (error) {
     console.error("Error in generateResponse:", error);
     textElem.innerHTML = "The server is overloaded. Please try again later.";
-    conversationHistory.push({ role: "AI", message: "The server is overloaded. Please try again later." });
+    conversationHistory.push({
+      role: "AI",
+      message: "The server is overloaded. Please try again later.",
+    });
   } finally {
     chatContainer.scrollTo({
       top: chatContainer.scrollHeight,
@@ -194,7 +224,11 @@ function handleChatResponse(message) {
     <img src="user-image1.jpeg" alt="bot image" id="user-image" width="5%" />
     <div class="user-chat-area">
       ${currentMessage}  
-      ${currentFile && currentFile.data ? `<img src="data:${currentFile.mime_type};base64,${currentFile.data}" class="chooseimg"/>` : ""}
+      ${
+        currentFile && currentFile.data
+          ? `<img src="data:${currentFile.mime_type};base64,${currentFile.data}" class="chooseimg"/>`
+          : ""
+      }
     </div>`;
   promptInput.value = "";
   let userChatbox = createChatBox(html, "user-chat-box");
