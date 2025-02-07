@@ -212,7 +212,7 @@ function handleChatResponse(message) {
     let aiChatbox = createChatBox(html, "ai-chat-box");
     chatContainer.appendChild(aiChatbox);
     generateResponse(aiChatbox, currentMessage, currentFile);
-  }, 200);
+  }, 300);
 }
 
 promptInput.addEventListener("keydown", (e) => {
